@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Traducteur de mangas 100% local dans le navigateur, sans serveur ni API." />
+  <title>MangaTrad · Traduction locale</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Bibliothèques externes (globales). Le reste de l'app utilise des modules ES. -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="logo">漫</span>
+      <div>
+        <h1>MangaTrad</h1>
+        <p class="tagline">Traduction d'images &amp; mangas — 100% dans votre navigateur</p>
+      </div>
+    </div>
+    <div class="status-pill" id="engineStatus">Moteurs : en attente</div>
+  </header>
+
+  <main class="layout">
+    <!-- Panneau de contrôle -->
+    <section class="panel controls">
+      <h2>1. Réglages</h2>
+
+      <div class="field">
+        <label for="srcLang">Langue source</label>
+        <select id="srcLang"></select>
+      </div>
+
+      <div class="field">
+        <label for="tgtLang">Langue cible</label>
+        <select id="tgtLang"></select>
+      </div>
+
+      <h2>2. Importer</h2>
+      <div class="field">
+        <label for="fileInput" class="file-drop" id="fileDrop">
+          <strong>Cliquez ou glissez-déposez</strong>
+          <span>Image (PNG, JPG, JPEG, WEBP) ou ZIP d'images</span>
+        </label>
+        <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.webp,.zip,image/png,image/jpeg,image/webp,application/zip" multiple hidden />
+      </div>
+
+      <h2>3. Traiter</h2>
+      <div class="btn-row">
+        <button id="processBtn" class="btn primary" disabled>Lancer la traduction</button>
+        <button id="clearBtn" class="btn ghost">Vider la file</button>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-label">
+          <span>Progression globale</span>
+          <span id="globalProgressText">0 %</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="globalProgress"></div></div>
+      </div>
+
+      <div class="btn-row">
+        <button id="downloadZipBtn" class="btn" disabled>Télécharger tout (ZIP)</button>
+      </div>
+    </section>
+
+    <!-- File de traitement -->
+    <section class="panel queue">
+      <div class="queue-head">
+        <h2>File de traitement</h2>
+        <span class="queue-count" id="queueCount">0 image(s)</span>
+      </div>
+      <div id="queue" class="queue-list">
+        <p class="empty-hint">Aucune image. Importez une image ou un ZIP pour commencer.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Journal d'événements -->
+  <section class="panel logs">
+    <div class="logs-head">
+      <h2>Journal</h2>
+      <button id="clearLogsBtn" class="btn ghost small">Effacer</button>
+    </div>
+    <pre id="logs" class="logs-body"></pre>
+  </section>
+
+  <!-- Modale d'édition manuelle -->
+  <div class="modal-overlay" id="editModal" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Éditer les traductions</h2>
+        <button id="closeEditBtn" class="btn ghost small">Fermer</button>
+      </div>
+      <div class="modal-body" id="editBlocks"></div>
+      <div class="modal-foot">
+        <button id="reRenderBtn" class="btn primary">Appliquer &amp; régénérer</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <span>Aucun serveur · Aucune clé API · Aucun appel externe de traduction</span>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
