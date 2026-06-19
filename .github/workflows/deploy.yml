@@ -28,11 +28,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Prérequis : activer Pages dans Settings → Pages → Source: "GitHub Actions".
+      # (Le jeton du workflow ne peut PAS activer Pages lui-même.)
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          # Active automatiquement GitHub Pages s'il ne l'est pas déjà.
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
