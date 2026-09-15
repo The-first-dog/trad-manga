@@ -60,9 +60,17 @@ jobs:
           path: dist/MangaTrad.apk
           if-no-files-found: error
 
-      - name: Publish Release (tags only)
-        if: startsWith(github.ref, 'refs/tags/')
+      # Publie l'APK dans une Release GitHub (lien de téléchargement direct).
+      # - push sur main   -> Release « latest » mise à jour à chaque build.
+      # - push d'un tag v* -> Release figée pour cette version.
+      # La Release est créée côté Actions (jeton contents: write), ce qui ne
+      # dépend pas d'un push de tag manuel.
+      - name: Publish Release
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'latest' }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'MangaTrad — dernière APK' }}
+          prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
           files: dist/MangaTrad.apk
           generate_release_notes: true
