@@ -29,6 +29,12 @@ android {
 }
 
 dependencies {
+    // Aligne toutes les dépendances Kotlin transitives sur une même version.
+    // Sans cela, kotlin-stdlib (1.8.x, tiré par AndroidX) et kotlin-stdlib-jdk8
+    // (1.6.x, transitif) entrent en conflit : depuis Kotlin 1.8, les classes jdk7/jdk8
+    // ont été fusionnées dans le stdlib -> erreur « Duplicate class ... CollectionsJDK8Kt ».
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.9.24')
+
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.webkit:webkit:1.11.0'
 }
