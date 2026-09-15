@@ -55,8 +55,36 @@ export async function buildZip(images, filename = 'manga-traduit.zip') {
   triggerDownload(content, filename);
 }
 
-/** Déclenche le téléchargement d'un Blob. */
+/**
+ * Déclenche le téléchargement d'un Blob.
+ *
+ * Dans l'app Android (WebView), les téléchargements `blob:` ne sont pas pris en
+ * charge nativement : on passe alors par le pont `window.AndroidBridge` qui
+ * enregistre le fichier dans le dossier « Téléchargements ». Sur le web classique
+ * (GitHub Pages), on garde le téléchargement via un lien <a download>.
+ */
 export function triggerDownload(blob, filename) {
+  const bridge = typeof window !== 'undefined' ? window.AndroidBridge : null;
+  if (bridge && typeof bridge.saveBase64 === 'function') {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      try {
+        const dataUrl = String(reader.result);
+        const base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+        bridge.saveBase64(filename, base64, blob.type || 'application/octet-stream');
+      } catch (_) {
+        anchorDownload(blob, filename);
+      }
+    };
+    reader.onerror = () => anchorDownload(blob, filename);
+    reader.readAsDataURL(blob);
+    return;
+  }
+  anchorDownload(blob, filename);
+}
+
+/** Téléchargement web standard via un lien <a download>. */
+function anchorDownload(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

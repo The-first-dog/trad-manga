@@ -38,6 +38,19 @@
         <select id="tgtLang"></select>
       </div>
 
+      <details class="advanced">
+        <summary>Modèle de traduction (avancé)</summary>
+        <div class="field">
+          <label for="customModel">Identifiant Hugging Face</label>
+          <input id="customModel" type="text" placeholder="auto — laisser vide" autocapitalize="off" autocomplete="off" spellcheck="false" />
+          <small class="hint">
+            Vide = choix automatique (Opus-MT, avec repli <em>pivot</em> par l'anglais).
+            Sinon un identifiant compatible Transformers.js, ex.
+            <code>Xenova/opus-mt-ja-en</code> — il remplace la paire choisie.
+          </small>
+        </div>
+      </details>
+
       <h2>2. Importer</h2>
       <div class="field">
         <label for="fileInput" class="file-drop" id="fileDrop">
@@ -48,6 +61,10 @@
       </div>
 
       <h2>3. Traiter</h2>
+      <div class="field checks">
+        <label class="check"><input type="checkbox" id="autoProcess" checked /> Traduire automatiquement après import</label>
+        <label class="check"><input type="checkbox" id="autoExport" checked /> Exporter en ZIP à la fin</label>
+      </div>
       <div class="btn-row">
         <button id="processBtn" class="btn primary" disabled>Lancer la traduction</button>
         <button id="clearBtn" class="btn ghost">Vider la file</button>

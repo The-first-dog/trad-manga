@@ -1,0 +1,4 @@
+// Build script racine. Le plugin Android est appliqué dans app/build.gradle.
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}

@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Assets web générés au build (copiés depuis la racine du dépôt)
+app/src/main/assets/www/
+
+# Config locale
+local.properties
+*.keystore
+*.jks
+
+# IDE
+.idea/
+*.iml
+captures/
