@@ -4,7 +4,7 @@
 // Tout est asynchrone (async/await) pour ne jamais bloquer l'interface.
 
 import { runOCR, groupWords } from './ocr.js';
-import { translateText, preloadModel } from './translate.js';
+import { translateText, preloadModel, setCustomModel } from './translate.js';
 import { renderTranslated, canvasToBlob, makeThumb, loadImage } from './imageProcessor.js';
 import { extractImagesFromZip, buildZip, triggerDownload } from './zipManager.js';
 
@@ -49,6 +49,9 @@ const globalProgressText = $('#globalProgressText');
 const processBtn = $('#processBtn');
 const clearBtn = $('#clearBtn');
 const downloadZipBtn = $('#downloadZipBtn');
+const customModelInput = $('#customModel');
+const autoProcessChk = $('#autoProcess');
+const autoExportChk = $('#autoExport');
 
 // ---------------------------------------------------------------------------
 // Journalisation
@@ -205,6 +208,13 @@ async function handleFiles(fileList) {
     }
   }
   renderQueue();
+
+  // « Déposez un ZIP et hop, ça sort la traduction » : traitement automatique.
+  const hasPending = queue.some((it) => it.status === 'queued');
+  if (autoProcessChk?.checked && hasPending && !isProcessing) {
+    log('Traduction automatique lancée (importation terminée).');
+    processAll();
+  }
 }
 
 async function addToQueue(name, blob) {
@@ -237,6 +247,9 @@ async function processAll() {
   const src = srcSelect.value;
   const tgt = tgtSelect.value;
   const srcLang = langByOpus(src);
+
+  // Prise en compte d'un éventuel modèle personnalisé saisi par l'utilisateur.
+  setCustomModel(customModelInput ? customModelInput.value : '');
 
   isProcessing = true;
   renderQueue();
@@ -279,6 +292,11 @@ async function processAll() {
   updateGlobalProgress();
   renderQueue();
   log('Traitement de la file terminé.', 'success');
+
+  // Export ZIP automatique de la traduction si demandé.
+  if (autoExportChk?.checked && queue.some((it) => it.resultBlob)) {
+    await downloadAllZip();
+  }
 }
 
 async function processItem(item, src, tgt, tessLang) {
@@ -466,8 +484,9 @@ function boot() {
   registerServiceWorker();
   renderQueue();
   setEngineStatus('Moteurs : prêts', 'ready');
-  log('Application prête. Importez une image ou un ZIP.');
+  log('Application prête. Importez une image ou un ZIP : la traduction démarre toute seule.');
   log('Astuce : le premier traitement télécharge les modèles (OCR + traduction), patientez.');
+  log('Paire sans modèle direct ? Repli automatique par l\'anglais (pivot).');
 }
 
 boot();

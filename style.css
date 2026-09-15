@@ -82,7 +82,8 @@ body {
 /* ---------- Form ---------- */
 .field { margin-bottom: 14px; }
 .field label { display: block; font-size: 13px; margin-bottom: 6px; color: var(--muted); }
-select {
+select,
+input[type="text"] {
   width: 100%;
   padding: 10px 12px;
   background: var(--panel-2);
@@ -91,6 +92,37 @@ select {
   border-radius: 10px;
   font-size: 14px;
 }
+
+/* ---------- Réglages avancés & options ---------- */
+.advanced {
+  margin: 0 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  padding: 4px 12px;
+}
+.advanced > summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 8px 2px;
+  user-select: none;
+}
+.advanced[open] > summary { color: var(--text); }
+.hint { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.hint code { background: var(--panel-2); padding: 1px 5px; border-radius: 5px; font-size: 11px; }
+
+.checks { display: flex; flex-direction: column; gap: 8px; }
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  margin: 0;
+}
+.check input { accent-color: var(--accent); width: 16px; height: 16px; }
 
 .file-drop {
   display: flex;

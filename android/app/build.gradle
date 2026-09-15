@@ -1,0 +1,55 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.mangatrad.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.mangatrad.app"
+        minSdk 29          // Android 10+ : accès simple au dossier Téléchargements (MediaStore), aucune permission de stockage requise.
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            // Signé avec la clé de debug pour rester installable depuis la CI sans keystore dédié.
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.webkit:webkit:1.11.0'
+}
+
+// -----------------------------------------------------------------------------
+// Embarque l'app web (fichiers à la racine du dépôt) dans les assets Android.
+// Ainsi le wrapper reste une simple coquille : la logique vit dans les fichiers web.
+// -----------------------------------------------------------------------------
+def webFiles = [
+    'index.html', 'style.css', 'app.js', 'ocr.js',
+    'translate.js', 'imageProcessor.js', 'zipManager.js', 'sw.js'
+]
+
+tasks.register('copyWebApp', Copy) {
+    description = "Copie l'app web (racine du dépôt) dans les assets."
+    from(new File(rootProject.projectDir, "..")) {
+        include webFiles
+    }
+    into "${projectDir}/src/main/assets/www"
+}
+
+tasks.named('preBuild') {
+    dependsOn 'copyWebApp'
+}
