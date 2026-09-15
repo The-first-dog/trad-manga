@@ -33,6 +33,10 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Installe explicitement les composants requis. Évite le paquet « tools »
+          # (obsolète, retiré du dépôt) que l'action tente d'installer par défaut.
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
